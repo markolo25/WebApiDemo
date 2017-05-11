@@ -70,6 +70,7 @@ namespace WebApiDemo.Controllers
             return View(student);
         }
 
+        //Student/Edit?id=1
         public ActionResult Edit(int id)
         {
             StudentViewModel student = null;
@@ -114,6 +115,29 @@ namespace WebApiDemo.Controllers
             }
             return View(student);
         }
+
+        public ActionResult Delete(int id)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:59567/api/");
+
+                //HTTP DELETE
+                var deleteTask = client.DeleteAsync("students/" + id.ToString());
+                deleteTask.Wait();
+
+                var result = deleteTask.Result;
+                if (result.IsSuccessStatusCode)
+                {
+
+                    return RedirectToAction("Index");
+                }
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
 
     }
 }
