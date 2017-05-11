@@ -10,6 +10,10 @@ namespace WebApiDemo.Controllers
 {
     public class StudentController : ApiController
     {
+
+        //GET: http://localhost:64189/api/student	Returns all students without associated address.
+        //GET: http://localhost:64189/api/student?includeAddress=false	Returns all students without associated address.
+        //GET: http://localhost:64189/api/student?includeAddress=true	Returns all students with address. 
         public IHttpActionResult GetAllStudents(bool includeAddress = false)
         {
             IList<StudentViewModel> students = null;
@@ -41,7 +45,7 @@ namespace WebApiDemo.Controllers
         }
 
 
-
+        //GET: http://localhost:64189/api/student?id=123
         public IHttpActionResult GetStudentById(int id)
         {
             StudentViewModel student = null;
@@ -65,6 +69,7 @@ namespace WebApiDemo.Controllers
             return Ok(student);
         }
 
+        //GET: http://localhost:64189/api/student?name=steve
         public IHttpActionResult GetAllStudents(string name)
         {
             IList<StudentViewModel> students = null;
@@ -98,6 +103,7 @@ namespace WebApiDemo.Controllers
 
         }
 
+        //GET: http://localhost:64189/api/student?standardId=5
         public IHttpActionResult GetAllStudentsInSameStandard(int standardId)
         {
             IList<StudentViewModel> students = null;
@@ -133,5 +139,28 @@ namespace WebApiDemo.Controllers
 
             return Ok(students);
         }
+
+
+        //POST: http://localhost:64189/api/student
+        public IHttpActionResult PostNewStudent(StudentViewModel student)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Invalid data.");
+
+            using (var ctx = new SchoolDBEntities())
+            {
+                ctx.Students.Add(new Student()
+                {
+                    StudentID = student.Id,
+                    StudentName = student.StudentName
+                });
+
+                ctx.SaveChanges();
+            }
+
+            return Ok();
+        }
+
+        //PUT
     }
 }
