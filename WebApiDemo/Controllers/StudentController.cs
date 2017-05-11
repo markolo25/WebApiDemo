@@ -185,5 +185,24 @@ namespace WebApiDemo.Controllers
 
             return Ok();
         }
+
+        //Delete
+        public IHttpActionResult Delete(int id)
+        {
+            if (id <= 0)
+                return BadRequest("Not a valid student id");
+
+            using (var ctx = new SchoolDBEntities())
+            {
+                var student = ctx.Students
+                    .Where(s => s.StudentID == id)
+                    .FirstOrDefault();
+
+                ctx.Entry(student).State = System.Data.Entity.EntityState.Deleted;
+                ctx.SaveChanges();
+            }
+
+            return Ok();
+        }
     }
 }
