@@ -162,5 +162,28 @@ namespace WebApiDemo.Controllers
         }
 
         //PUT
+        public IHttpActionResult Put(StudentViewModel student)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Not a valid model");
+
+            using (var ctx = new SchoolDBEntities())
+            {
+                var existingStudent = ctx.Students.Where(s => s.StudentID == student.Id)
+                                                        .FirstOrDefault<Student>();
+
+                if (existingStudent != null)
+                {
+                    existingStudent.StudentName = student.StudentName;
+                    ctx.SaveChanges();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+
+            return Ok();
+        }
     }
 }
