@@ -42,6 +42,7 @@ namespace WebApiDemo.Controllers
             return View(students);
         }
 
+        //student/create
         public ActionResult create()
         {
             return View();
@@ -66,6 +67,51 @@ namespace WebApiDemo.Controllers
 
             ModelState.AddModelError(string.Empty, "Server Error. Please contact administrator.");
 
+            return View(student);
+        }
+
+        public ActionResult Edit(int id)
+        {
+            StudentViewModel student = null;
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:59567/api/");
+                //HTTP GET
+                var responseTask = client.GetAsync("students?id=" + id.ToString());
+                responseTask.Wait();
+
+                var result = responseTask.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    var readTask = result.Content.ReadAsAsync<StudentViewModel>();
+                    readTask.Wait();
+
+                    student = readTask.Result;
+                }
+            }
+
+            return View(student);
+        }
+        [HttpPost]
+        public ActionResult Edit(StudentViewModel student)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:59567/api/students");
+
+                //HTTP POST
+                var putTask = client.PutAsJsonAsync<StudentViewModel>("students", student);
+                putTask.Wait();
+
+
+                var result = putTask.Result;
+                if (result.IsSuccessStatusCode)
+                {
+
+                    return RedirectToAction("Index");
+                }
+            }
             return View(student);
         }
 
