@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Student App</title>
+</head>
+
+<body>
+
+    <div>
+        <h2>All Students</h2>
+        <ul id="student" />
+    </div>
+    <div>
+        <input type="button" value="Fill List with Students" onclick="fill();" />
+        <h2>Add a Student with Name</h2>
+        <input type="text" id="studentName" size="5" />
+        <input type="button" value="Add" onclick="add();" />
+        <p id="students" />
+    </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script>
+        var uri = 'http://localhost:59567/api/students';
+
+        function formatItem(item) {
+            return item.StudentName + ': ' + item.Id;
+        }
+
+        function fill() {
+            $().ready(function() {
+                var url = uri;
+
+                $.get(url, function(data) {
+                    $.each(data, function(key, item) {
+                        // add a list item for the product.
+                        $('<li>', {
+                            text: formatItem(item)
+                        }).appendTo($('#students'));
+                    });
+                });
+            })
+        }
+
+        function add() {
+            var name = $('#studentName').val();
+            $.post(uri, {
+                StudentName: name
+            }, function(jqXHR) {
+                $('p').append('Added: ' + name);
+            });
+        }
+    </script>
+</body>
+
+</html>
